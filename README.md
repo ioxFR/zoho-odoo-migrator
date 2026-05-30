@@ -80,6 +80,8 @@ Defaults already set for your context:
 
 All values remain configurable.
 
+> ⚠️ Security note: the default `ODOO_URL` uses `http://` to match your local self-hosted setup request. Use `https://` whenever traffic is not strictly confined to a trusted internal network.
+
 ## Usage
 
 ### Dry run contacts
@@ -149,3 +151,4 @@ It is written only when not in dry-run mode.
 - No deletes are performed.
 - V1 covers contacts and products only.
 - The package is structured for later invoice/estimate sync modules.
+- It is designed for Odoo 19 Community and should also work on nearby versions exposing the same XML-RPC models/fields.

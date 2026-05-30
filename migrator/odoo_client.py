@@ -18,12 +18,15 @@ class OdooClient:
         self.uid: int | None = None
 
     def authenticate(self) -> None:
-        uid = self._common.authenticate(
-            self.config.odoo_db,
-            self.config.odoo_username,
-            self.config.odoo_password,
-            {},
-        )
+        try:
+            uid = self._common.authenticate(
+                self.config.odoo_db,
+                self.config.odoo_username,
+                self.config.odoo_password,
+                {},
+            )
+        except Exception as exc:
+            raise RuntimeError(f"Odoo authentication request failed: {exc}") from exc
         if not uid:
             raise RuntimeError("Odoo authentication failed. Check ODOO_URL, ODOO_DB, ODOO_USERNAME, and ODOO_PASSWORD")
         self.uid = int(uid)

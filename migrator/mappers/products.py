@@ -12,7 +12,7 @@ def map_zoho_item_to_odoo_product(item: dict[str, Any]) -> dict[str, Any]:
     detailed_type = "service" if product_type == "service" else "product"
 
     values = {
-        "name": item.get("name") or item.get("item_name") or "Unnamed item",
+        "name": item.get("name") or item.get("item_name") or "Unnamed product",
         "default_code": item.get("sku"),
         "description_sale": item.get("description"),
         "list_price": item.get("rate") if item.get("rate") is not None else item.get("sales_rate"),

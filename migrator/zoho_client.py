@@ -4,6 +4,7 @@ import logging
 from typing import Any, Iterator
 
 import requests
+from requests import Response
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
@@ -33,6 +34,17 @@ class ZohoClient:
         self.session.mount("https://", adapter)
         self.session.mount("http://", adapter)
 
+    @staticmethod
+    def _safe_json(response: Response, context: str) -> dict[str, Any]:
+        try:
+            return response.json()
+        except ValueError as exc:
+            body = (response.text or "").strip()
+            snippet = body[:500]
+            raise RuntimeError(
+                f"{context}: expected JSON response but got status={response.status_code}, body={snippet!r}"
+            ) from exc
+
     def refresh_access_token(self) -> None:
         payload = {
             "grant_type": "refresh_token",
@@ -45,7 +57,7 @@ class ZohoClient:
             data=payload,
             timeout=self.config.http_timeout_seconds,
         )
-        data = response.json()
+        data = self._safe_json(response, "Zoho OAuth refresh failed")
         if response.status_code >= 400 or "access_token" not in data:
             raise RuntimeError(f"Zoho OAuth refresh failed ({response.status_code}): {data}")
 
@@ -83,7 +95,7 @@ class ZohoClient:
                 timeout=self.config.http_timeout_seconds,
             )
 
-        data = response.json()
+        data = self._safe_json(response, f"Zoho API request failed for {path}")
         if response.status_code >= 400:
             raise RuntimeError(f"Zoho API request failed ({response.status_code}) for {path}: {data}")
         return data
