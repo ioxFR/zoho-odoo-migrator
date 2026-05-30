@@ -1,0 +1,15 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+
+# Local configuration and migration state
+.env
+state/
+
+# OS/editor files
+.DS_Store
